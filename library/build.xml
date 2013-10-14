@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="listviewanimations" default="help">
+<project name="listviewanimations">
 
     <!-- The local.properties file is created and updated by the 'android' tool.
          It contains the path to the SDK. It should *NOT* be checked into
@@ -47,6 +47,9 @@
          This file is an integral part of the build system for your
          application and should be checked into Version Control Systems. -->
     <loadproperties srcFile="project.properties" />
+	
+    <loadproperties srcFile="../../project.properties" />
+	<import file="../../tools/ant/aviary_sdk_rules.xml" optional="true" />
 
     <!-- quick check on sdk.dir -->
     <fail
@@ -88,5 +91,25 @@
     -->
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
+    
+    <property name="out.combined.absolute.file" value="${out.absolute.dir}/combined.jar" />
+	
+	<target name="-post-compile" depends="-combine-jars">
+		<!-- combine all the needed jars into the final jar -->
+		<antcall target="-rename-jar">
+		    <param name="dst.file" value="${out.absolute.dir}/${listviewanimations.jar}" />
+		    <param name="src.file" value="${out.combined.absolute.file}" />
+		</antcall>
+	</target>
+	
+	<target name="-combine-jars">
+	    <jar destfile="${out.combined.absolute.file}">
+	        <zipgroupfileset dir="libs" excludes="android-support*.jar" includes="*.jar" />
+	        <zipgroupfileset dir="${out.absolute.dir}" includes="classes.jar" />
+	        <manifest>
+	            <attribute name="Main-Class" value="com.haarman.listviewanimations.ArrayAdapter"/>
+	        </manifest>
+	    </jar>
+	</target>	
 
 </project>
